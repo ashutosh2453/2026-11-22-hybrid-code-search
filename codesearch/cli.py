@@ -57,6 +57,7 @@ def main(argv: list[str] | None = None) -> int:
                               prefer_implementation=not args.include_tests_docs)
             if args.json:
                 print(json.dumps([h.to_dict() for h in hits], indent=2))
+                return 0
             for i, h in enumerate(hits, start=1):
                 c = h.chunk
                 print(f"\n{i}. {c.path}:{c.start_line}-{c.end_line}  {c.kind} {c.symbol}  "

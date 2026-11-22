@@ -211,3 +211,12 @@ def test_api(repo):
         assert c.get("/search", params={"q": "x"}).status_code == 422  # too short
         assert c.get("/search", params={"q": "token", "mode": "magic"}).status_code == 422
         assert "Hybrid Code Search" in c.get("/").text
+
+
+def test_cli_json_output_is_valid_json(repo, capsys):
+    import json
+    from codesearch.cli import main
+
+    assert main(["search", f"demo={repo}", "rate limiter token bucket", "--mode", "lexical", "--json", "-k", "2"]) == 0
+    hits = json.loads(capsys.readouterr().out)  # nothing but JSON on stdout
+    assert hits[0]["symbol"] == "RateLimiter"
