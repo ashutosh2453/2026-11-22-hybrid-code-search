@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hybrid-code-search"
+version = "0.1.0"
+description = "Natural-language code search: structural chunking, BM25 + embeddings (Qdrant) fused with RRF, with a retrieval benchmark"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+# torch is installed separately (CPU or CUDA build)
+dependencies = ["numpy>=1.26", "sentence-transformers>=3.0", "qdrant-client>=1.10", "fastapi>=0.110", "uvicorn[standard]>=0.29"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "httpx>=0.27"]
+
+[project.scripts]
+codesearch = "codesearch.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["codesearch*"]
+
+[tool.setuptools.package-data]
+codesearch = ["static/*.html"]
