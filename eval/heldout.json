@@ -1,0 +1,18 @@
+[
+  {"q": "hash api keys before storing them", "path": "feature-flags/server/src/service.ts", "symbol": null},
+  {"q": "read the sdk key from the request header", "path": "feature-flags/server/src/app.ts", "symbol": null},
+  {"q": "render meeting minutes as markdown grouped by owner", "path": "meeting-tracker/server/src/exporters.ts", "symbol": "minutesMarkdown"},
+  {"q": "fold long calendar lines to 75 octets", "path": "meeting-tracker/server/src/exporters.ts", "symbol": "fold"},
+  {"q": "turn html into readable text, skipping scripts and navigation", "path": "research-agent/research_agent/sources.py", "symbol": "html_to_text|_TextExtractor"},
+  {"q": "full text search over saved research notes", "path": "research-agent/research_agent/notebook.py", "symbol": "Notebook"},
+  {"q": "pick answer sentences with maximal marginal relevance", "path": "rag-auditor/rag_auditor/generation.py", "symbol": "ExtractiveGenerator"},
+  {"q": "fall back to extractive answers when the local llm fails", "path": "rag-auditor/rag_auditor/service.py", "symbol": "RAGService"},
+  {"q": "validate an applicant record and refuse protected attributes", "path": "credit-risk/credit_risk/data.py", "symbol": "validate_applicant"},
+  {"q": "write a model card with metrics and fairness tables", "path": "credit-risk/credit_risk/train.py", "symbol": "model_card"},
+  {"q": "post a pull request review with inline comments", "path": "review-board/review_board/cli.py", "symbol": "post_github_review"},
+  {"q": "fetch the changed files of a pull request from the github api", "path": "review-board/review_board/diff.py", "symbol": "from_github_pr"},
+  {"q": "generate a synthetic video of people walking for testing", "path": "occupancy/occupancy/demo.py", "symbol": "make_demo_video"},
+  {"q": "draw a heatmap of where people stood", "path": "occupancy/occupancy/pipeline.py", "symbol": "save_heatmap_png"},
+  {"q": "hash the password before saving a user", "path": "enersage/backend/src/models/User.js", "symbol": null},
+  {"q": "limit upload size and only accept csv files", "path": "enersage/backend/src/routes/data.js", "symbol": null}
+]
