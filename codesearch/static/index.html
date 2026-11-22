@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hybrid Code Search</title>
+<style>
+  :root { --bg:#f6f6f3; --panel:#fff; --ink:#1b1b19; --muted:#6a6a64; --line:#e0e0da; --accent:#2d55c8; --code:#f0f0ec; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#131312; --panel:#1c1c1a; --ink:#ececea; --muted:#9b9b95; --line:#32322e; --accent:#8fa9ff; --code:#232320; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  main { max-width:960px; margin:0 auto; padding:20px 16px 60px; }
+  h1 { font-size:20px; margin:0 0 4px; } .muted { color:var(--muted); font-size:13px; }
+  form { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+  input, select, button { font:inherit; color:inherit; padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:var(--panel); }
+  input[type=search] { flex:1 1 320px; }
+  button { background:var(--accent); color:#fff; border-color:var(--accent); cursor:pointer; }
+  .hit { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:10px; }
+  .loc { font-family:ui-monospace,monospace; font-size:13px; }
+  pre { background:var(--code); border-radius:6px; padding:10px; overflow-x:auto; font-size:12.5px; margin:8px 0 0; max-height:260px; }
+  .tag { font-size:12px; color:var(--muted); margin-left:6px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Hybrid Code Search</h1>
+  <p class="muted" id="stats">Ask in plain English, e.g. “where are JWT tokens verified” or “count people crossing a line”.</p>
+  <form id="f">
+    <input type="search" id="q" placeholder="Describe the code you are looking for" required minlength="2" aria-label="Query">
+    <select id="mode" aria-label="Mode"><option value="hybrid">hybrid</option><option value="dense">semantic only</option><option value="lexical">keyword only</option></select>
+    <input id="path" placeholder="path filter, e.g. feature-flags/*" aria-label="Path filter">
+    <button>Search</button>
+  </form>
+  <div id="out"></div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+fetch("/stats").then(r => r.json()).then(s => { $("stats").textContent += ` Indexed ${s.chunks} chunks from ${Object.keys(s.repos).length} repositories.`; });
+$("f").onsubmit = async (e) => {
+  e.preventDefault();
+  const params = new URLSearchParams({ q: $("q").value, mode: $("mode").value, k: 10 });
+  if ($("path").value.trim()) params.set("path", $("path").value.trim());
+  $("out").innerHTML = '<p class="muted">Searching…</p>';
+  const res = await fetch(`/search?${params}`);
+  const data = await res.json();
+  if (!res.ok) { $("out").innerHTML = `<p>${esc(JSON.stringify(data.detail))}</p>`; return; }
+  $("out").innerHTML = data.results.map((h, i) => `
+    <div class="hit">
+      <div class="loc">${i + 1}. ${esc(h.path)}:${h.start_line}-${h.end_line}
+        <span class="tag">${esc(h.kind)} <b>${esc(h.symbol)}</b> · bm25 #${h.lexical_rank ?? "–"} · semantic #${h.dense_rank ?? "–"}</span></div>
+      <pre>${esc(h.text.split("\n").slice(0, 14).join("\n"))}</pre>
+    </div>`).join("") || '<p class="muted">No results.</p>';
+};
+</script>
+</body>
+</html>
